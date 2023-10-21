@@ -1,0 +1,14 @@
+{
+    "code" : "Jeni",
+    "status" : "OK",
+    "data" : [
+        {
+            "nama" : "jeni",
+            "tanggal" : 20
+        },
+        {
+            "nama" : "jeni",
+            "tanggal" : 20
+        }
+    ]
+}
