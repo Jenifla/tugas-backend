@@ -35,6 +35,46 @@ class ProductController extends BaseController {
     }
 }
 
+    public function insertProductApi(){
+        $requestData = $this->request->getJSON();
+
+        $validation = $this->validate([
+            'nama_product' => 'required',
+            'description' => 'required',
+        ]);
+        if(!$validation){
+            $this->response->setStatusCode(404);
+            return $this->response->setJSON([
+                'code' => 400,
+                'status' => 'BAD REQUEST',
+                'data' => null
+            ]
+            );
+        }
+        $data = [
+            'nama_product' => $requestData->nama_product,
+            'description' => $requestData->description
+        ];
+
+        $insert =  $this->product->insertProductORM($data);
+        if ($insert){
+            return $this->respond([
+                'code' => 200,
+                'status' => 'OK',
+                'data' => $data
+                ]
+                );
+        }else {
+            $this->response->setStatusCode(404);
+            return $this->response->setJSON([
+                'code' => 400,
+                'status' => 'BAD REQUEST',
+                'data' => NULL
+            ]
+            );
+        }
+    }
+
 
     public function readProduct(){
         $products = $this->product->findAll();
@@ -94,8 +134,70 @@ class ProductController extends BaseController {
         $this->product->update($id, $data);
         return redirect()->to(base_url("products"));
     }
+
+    public function updateProductApi($id){
+        $requestData = $this->request->getJSON();
+    
+        $validation = $this->validate([
+            'nama_product' => 'required',
+            'description' => 'required',
+        ]);
+    
+        if (!$validation){
+            $this->response->setStatusCode(400);
+            return $this->response->setJSON([
+                'code' => 400,
+                'status' => 'BAD REQUEST',
+                'data' => null
+            ]);
+        }
+    
+        $data = [
+            'nama_product' => $requestData->nama_product,
+            'description' => $requestData->description
+        ];
+    
+        // Panggil fungsi update pada model Anda dan dapatkan statusnya
+        $update =  $this->product->update($id, $data);
+    
+        if ($update){
+            return $this->respond([
+                'code' => 200,
+                'status' => 'OK',
+                'data' => $data
+            ]);
+        } else {
+            $this->response->setStatusCode(404);
+            return $this->response->setJSON([
+                'code' => 400,
+                'status' => 'BAD REQUEST',
+                'data' => null
+            ]);
+        }
+    }
+    
+
     public function deleteProduct($id){
         $this->product->delete($id);
+        return redirect()->to(base_url("products"));
+    }
+
+    public function deleteProductApi($id){
+        $delete = $this->product->delete($id);
+
+        if ($delete) {
+            return $this->respond([
+                'code' => 200,
+                'status' => 'success',
+                'message' => 'Product deleted successfully'
+            ]);
+        } else {
+            return $this->respond([
+                'code' => 500,
+                'status' => 'error',
+                'message' => 'Failed to delete product'
+            ]);
+        }
         return redirect()->to(base_url("products"));
     }
     
